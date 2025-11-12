@@ -40,9 +40,23 @@ qs('#auth-submit')?.addEventListener('click', () => {
     if (found) return alert('Email already used');
     const u = { id: uid(), name: n, email: e, password: pw };
     users.unshift(u); cur = u; saveAll(); qs('#auth-modal')?.classList.add('hidden'); render();
+    // update auth buttons and clear form
+    qs('#btn-auth')?.classList.add('hidden'); qs('#btn-logout')?.classList.remove('hidden');
+    if (qs('#auth-email')) qs('#auth-email').value = '';
+    if (qs('#auth-password')) qs('#auth-password').value = '';
+    if (qs('#auth-name')) qs('#auth-name').value = '';
   } else {
-    if (!found || found.password !== pw) return alert('Wrong email or password');
-    cur = found; saveAll(); qs('#auth-modal')?.classList.add('hidden'); render();
+    if (!found) return alert('Wrong email or password');
+    // Support legacy users without password: set password on first login
+    if (!found.password) {
+      found.password = pw;
+    } else if (found.password !== pw) {
+      return alert('Wrong email or password');
+    }
+    cur = found; saveAll(); qs('#auth-modal')?.classList.add('hidden');
+    // update auth buttons and UI
+    qs('#btn-auth')?.classList.add('hidden'); qs('#btn-logout')?.classList.remove('hidden');
+    render();
   }
 });
 qs("#btn-post")?.addEventListener("click", () => {
@@ -52,7 +66,7 @@ qs("#btn-post")?.addEventListener("click", () => {
   saveAll();
   qs("#post-text").value = "";
 });
-qs('#btn-logout')?.addEventListener('click', () => { cur = null; saveAll(); });
+qs('#btn-logout')?.addEventListener('click', () => { cur = null; saveAll(); qs('#btn-auth')?.classList.remove('hidden'); qs('#btn-logout')?.classList.add('hidden'); render(); });
 // Navbar event handling (show/hide sections)
 function showSection(name){
   const sections = ['#page-home','#page-profile','#page-friends','#page-messages','#page-notifs'];
