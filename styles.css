@@ -16,6 +16,8 @@ body {
   height: 100%;
 }
 body {
+  display: flex;
+  flex-direction: column;
   font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg);
   margin: 0;
@@ -98,8 +100,6 @@ body {
   padding: 24px;
 }
 
-html,body{height:100%}
-body{display:flex;flex-direction:column}
 main.container{flex:1}
 .card {
   background: var(--card);

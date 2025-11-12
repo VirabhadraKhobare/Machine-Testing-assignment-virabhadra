@@ -6,7 +6,6 @@
   const LS_CONV = 'sns_conversations';
   const LS_NOTIFS = 'sns_notifications';
   const qs = sel => document.querySelector(sel);
-  const qsa = sel => document.querySelectorAll(sel);
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 
   const btnAuth = qs('#btn-auth');
@@ -41,7 +40,6 @@
   const usersUl = qs('#users-ul');
   const usersMini = qs('#users-mini');
   const friendsList = qs('#friends-list');
-  const friendsSection = qs('#page-friends');
 
   const navHome = qs('#nav-home');
   const navProfile = qs('#nav-profile');
@@ -91,7 +89,7 @@
     closeAuth.addEventListener('click', closeAuthModal);
     toggleAuth.addEventListener('click', toggleAuthMode);
     authSubmit.addEventListener('click', handleAuth);
-  if(authForm) authForm.addEventListener('submit', (ev)=>{ ev.preventDefault(); handleAuth(); });
+    if(authForm) authForm.addEventListener('submit', (ev)=>{ ev.preventDefault(); handleAuth(); });
     btnLogout.addEventListener('click', doLogout);
 
     btnPost.addEventListener('click', handleCreatePost);
