@@ -1,7 +1,3 @@
-// Simple SNS frontend logic using localStorage
-// Data shapes
-// user: {id, name, email, password, bio}
-// post: {id, userId, text, imageDataUrl?, likes:[], comments:[{id,userId,text}], createdAt}
 
 (function(){
   const LS_USERS = 'sns_users';
@@ -9,12 +5,10 @@
   const LS_CURRENT = 'sns_currentUser';
   const LS_CONV = 'sns_conversations';
   const LS_NOTIFS = 'sns_notifications';
-  // Helpers
   const qs = sel => document.querySelector(sel);
   const qsa = sel => document.querySelectorAll(sel);
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 
-  // Elements
   const btnAuth = qs('#btn-auth');
   const btnLogout = qs('#btn-logout');
   const authModal = qs('#auth-modal');
@@ -71,7 +65,6 @@
   const notificationsList = qs('#notifications-list');
   const userPostsDiv = qs('#user-posts');
 
-  // State
   let users = load(LS_USERS, []);
   let posts = load(LS_POSTS, []);
   let convos = load(LS_CONV, []);
@@ -79,7 +72,6 @@
   let current = load(LS_CURRENT, null);
   let isSignup = true;
 
-  // Init
   window.addEventListener('load', init);
 
   function init(){
@@ -115,11 +107,9 @@
     sendMsgBtn.addEventListener('click', sendMessage);
   }
 
-  // Storage helpers
   function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
   function load(key, fallback){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):fallback;}catch(e){return fallback} }
 
-  // Auth
   function openAuth(){
     isSignup = true; showAuthModal();
   }
@@ -137,7 +127,6 @@
     toggleAuth.textContent = isSignup? 'Have an account? Log in' : 'Need an account? Sign up';
     const nameRow = authName && authName.closest('.form-row');
     if(nameRow) nameRow.style.display = isSignup? 'flex':'none';
-    // focus
     if(isSignup){ authName && authName.focus(); } else { authEmail && authEmail.focus(); }
   }
 
@@ -161,7 +150,6 @@
       authMsg.textContent = 'Signed in.'; closeAuthModal(); renderAuthState(); renderProfile();
     }
 
-    // clear inputs
     authEmail.value=''; authPassword.value=''; authName.value='';
   }
 
@@ -179,7 +167,6 @@
 
   function getCurrentUser(){ return current? users.find(u=>u.id===current.id): null }
 
-  // Profile
   function renderProfile(){
     const u = getCurrentUser();
     if(!u){ profileHeader && profileHeader.classList.add('hidden'); return }
@@ -198,9 +185,7 @@
     renderProfile(); renderFeed();
   }
 
-  // Users list
   function renderUsers(){
-    // full list
     usersUl.innerHTML = '';
     usersMini.innerHTML = '';
     users.forEach(u=>{
@@ -236,7 +221,6 @@
     });
   }
 
-  // Render posts for current user in profile
   function renderUserPosts(){
     const me = getCurrentUser(); if(!me) { userPostsDiv && (userPostsDiv.innerHTML=''); return }
     const mine = posts.filter(p=>p.userId===me.id);
@@ -249,7 +233,6 @@
     });
   }
 
-  // Posts
   function handleCreatePost(){
     const text = postText.value.trim();
     if(!text && !postImage.files.length){ alert('Write something or select an image'); return }
@@ -291,13 +274,11 @@
         <div class="comments" id="comments-${p.id}"></div>
       `;
 
-      // comments UI
       const commentsDiv = el.querySelector(`#comments-${p.id}`);
       const commentForm = document.createElement('div');
       commentForm.innerHTML = `<div style="margin-top:8px"><input class="comment-input" data-id="${p.id}" placeholder="Write a comment" style="width:70%"><button class="btn add-comment" data-id="${p.id}">Add</button></div>`;
       commentsDiv.appendChild(commentForm);
 
-      // existing comments
       if(p.comments && p.comments.length){
         p.comments.forEach(c=>{
           const cu = users.find(x=>x.id===c.userId) || {name:'Unknown'};
@@ -308,7 +289,6 @@
         });
       }
 
-      // wire up buttons
       el.querySelector('.like-btn').addEventListener('click', () => toggleLike(p.id));
       el.querySelector('.add-comment').addEventListener('click', (ev)=>{
         const id = ev.target.dataset.id; const input = el.querySelector('.comment-input[data-id="'+id+'"]');
@@ -327,7 +307,6 @@
     const idx = p.likes.indexOf(u.id);
     if(idx===-1) p.likes.push(u.id); else p.likes.splice(idx,1);
     save(LS_POSTS, posts); renderFeed();
-    // notify post owner
     if(p.userId !== u.id){
       notifications.unshift({id:uid(), userId:p.userId, type:'like', by:u.id, postId:p.id, text:`${u.name} liked your post`, createdAt:new Date().toISOString()});
       save(LS_NOTIFS, notifications);
@@ -352,7 +331,6 @@
     posts = posts.filter(x=>x.id!==postId); save(LS_POSTS, posts); renderFeed();
   }
 
-  // Conversations / Messages
   function renderConversations(){
     convoList.innerHTML='';
     const me = getCurrentUser(); if(!me){ convoList.innerHTML='<li class="muted">Sign in to view conversations</li>'; return }
@@ -382,14 +360,13 @@
     const active = chatWindow.dataset.active; const text = chatInput.value.trim(); if(!text) return;
     let convo;
     if(active){ convo = convos.find(c=>c.id===active); }
-    if(!convo){ // create new with first friend in list or prompt
+    if(!convo){ 
       const friendId = (me.friends && me.friends[0]) || (users.find(u=>u.id!==me.id) && users.find(u=>u.id!==me.id).id);
       if(!friendId){ alert('No one to message yet'); return }
       convo = {id:uid(), participants:[me.id, friendId], messages:[]}; convos.unshift(convo);
     }
     convo.messages.push({id:uid(), senderId:me.id, text, createdAt:new Date().toISOString()});
     save(LS_CONV, convos); chatInput.value=''; openConversation(convo.id); renderConversations();
-    // notify other
     const other = convo.participants.find(id=>id!==me.id);
     notifications.unshift({id:uid(), userId:other, type:'message', by:me.id, text:`${me.name} sent you a message`, createdAt:new Date().toISOString()});
     save(LS_NOTIFS, notifications); renderNotifications();
@@ -407,9 +384,7 @@
     });
   }
 
-  // Simple in-page navigation
   function showSection(name){
-    // hide all pages
     [pageHome,pageProfile,pageFriends,pageMessages,pageNotifs].forEach(p=>p && p.classList.add('hidden'));
     [navHome,navProfile,navFriends,navMessages,navNotifs].forEach(n=>n && n.classList.remove('active'));
     if(name==='home'){ pageHome.classList.remove('hidden'); navHome.classList.add('active'); }
@@ -420,27 +395,22 @@
     renderAuthState(); renderUsers(); renderFeed(); renderProfile(); renderConversations(); renderNotifications();
   }
 
-  // Banner slider
   function startBanner(){
     const container = qs('#banner-slider'); if(!container) return; const slides = Array.from(container.querySelectorAll('.slide'));
     let idx=0; slides.forEach((s,i)=>s.style.display = i===0?'block':'none');
     setInterval(()=>{ slides[idx].style.display='none'; idx=(idx+1)%slides.length; slides[idx].style.display='block'; }, 4000);
   }
 
-  // Search
   function handleSearch(){
     const q = (searchInput.value||'').toLowerCase().trim(); if(!q){ alert('Enter search term'); return }
-    // search users and posts
     const userMatches = users.filter(u=>u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
     const postMatches = posts.filter(p=> (p.text||'').toLowerCase().includes(q));
-    // show results in feed area
     feed.innerHTML = `<div class="card"><h3>Search results for "${escapeHtml(q)}"</h3></div>`;
     if(userMatches.length){ const c = document.createElement('div'); c.className='card'; c.innerHTML='<h4>Users</h4>'; userMatches.forEach(u=>{ const d=document.createElement('div'); d.textContent = u.name + ' ('+u.email+')'; c.appendChild(d); }); feed.appendChild(c); }
     if(postMatches.length){ const c=document.createElement('div'); c.className='card'; c.innerHTML='<h4>Posts</h4>'; postMatches.forEach(p=>{ const u = users.find(x=>x.id===p.userId)||{name:'Unknown'}; const d=document.createElement('div'); d.innerHTML = `<strong>${escapeHtml(u.name)}</strong>: ${escapeHtml(p.text)}`; c.appendChild(d); }); feed.appendChild(c); }
     showSection('home');
   }
 
-  // small utility
   function escapeHtml(s){ if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 })();
