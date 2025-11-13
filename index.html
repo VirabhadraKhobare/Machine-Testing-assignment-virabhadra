@@ -3,183 +3,143 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple SNS — Frontend Assignment</title>
+  <title>MiniSNS — Simplified Frontend</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="container nav-row">
-      <a id="logo" class="logo" href="#">MiniSNS</a>
+    <div class="wrap">
+      <a id="logo" class="logo" href="#" data-link="home">MiniSNS</a>
+      <nav class="nav">
+        <a href="#" id="nav-home" class="nav-link" data-link="home">Home</a>
+        <a href="#" id="nav-profile" class="nav-link" data-link="profile">Profile</a>
+        <a href="#" id="nav-friends" class="nav-link" data-link="friends">Friends</a>
+        <a href="#" id="nav-messages" class="nav-link" data-link="messages">Messages</a>
+        <a href="#" id="nav-notifs" class="nav-link" data-link="notifs">Notifications</a>
+      </nav>
 
-      <div class="nav-left">
-        <a id="nav-home" href="#" class="nav-link">Home</a>
-        <a id="nav-profile" href="#" class="nav-link">Profile</a>
-        <a id="nav-friends" href="#" class="nav-link">Friends</a>
-        <a id="nav-messages" href="#" class="nav-link">Messages</a>
-        <a id="nav-notifs" href="#" class="nav-link">Notifications</a>
-      </div>
-
-      <div class="nav-right">
-        <div class="search">
-          <input id="search-input" placeholder="Search users, posts or groups...">
-          <button id="search-btn" class="btn">Search</button>
-        </div>
+      <div class="actions">
+        <input id="search-input" placeholder="Search...">
         <button id="btn-auth" class="btn">Sign up / Login</button>
         <button id="btn-logout" class="btn hidden">Logout</button>
       </div>
     </div>
   </header>
 
-  <main class="container main-grid">
-    <section id="page-home" class="page left-col">
-      <div id="banner-slider" class="card banner">
-        <div class="slide">Welcome to MiniSNS — post something and connect!</div>
-        <div class="slide">Announcement: Demo site for frontend assignment.</div>
-        <div class="slide">Tip: Click "Sign up / Login" to start.</div>
+  <main class="wrap main">
+    <section id="page-home" class="page">
+      <div class="card banner">
+        <div class="slide">Welcome to MiniSNS — a simple frontend demo.</div>
       </div>
 
-      <div class="card post-creator hidden" id="post-creator">
-        <h3>Create a post</h3>
-        <textarea id="post-text" placeholder="What's on your mind?" rows="4"></textarea>
+      <div id="post-creator" class="card hidden">
+        <h3>Create post</h3>
+        <textarea id="post-text" rows="3" placeholder="What's on your mind?"></textarea>
         <input type="file" id="post-image" accept="image/*">
         <div class="row">
           <button id="btn-post" class="btn primary">Post</button>
         </div>
       </div>
 
-      <div id="feed" class="feed"></div>
+      <div id="feed" class="feed card">
+        <h3>Feed</h3>
+        <div id="posts"></div>
+      </div>
     </section>
 
-    <section id="page-profile" class="page hidden left-col">
-      <div id="profile-header" class="card">
-        <div class="profile-top"><div class="avatar big"></div>
-        <div>
-          <h2 id="profile-name">Your name</h2>
-          <p id="profile-email">email@example.com</p>
-          <p id="profile-bio-text" class="muted"></p>
-        </div></div>
-        <button id="edit-profile-btn" class="btn">Edit Profile</button>
+    <section id="page-profile" class="page hidden">
+      <div class="card profile-header">
+        <div class="avatar"></div>
+        <div class="p-info">
+          <h2 id="profile-name">Guest</h2>
+          <p id="profile-email" class="muted">Not logged in</p>
+          <p id="profile-bio" class="muted"></p>
+        </div>
+        <button id="edit-profile-btn" class="btn">Edit</button>
       </div>
 
       <div id="profile-edit" class="card hidden">
         <label>Display name <input id="profile-name-input" type="text"></label>
-        <label>Bio <textarea id="profile-bio"></textarea></label>
-        <button id="save-profile" class="btn primary">Save profile</button>
+        <label>Bio <textarea id="profile-bio-input"></textarea></label>
+        <button id="save-profile" class="btn primary">Save</button>
       </div>
 
-      <div id="profile-posts" class="card">
+      <div class="card">
         <h3>Your posts</h3>
         <div id="user-posts"></div>
       </div>
     </section>
 
-    <section id="page-friends" class="page hidden left-col">
+    <section id="page-friends" class="page hidden">
       <div class="card">
         <h3>Friends</h3>
-        <div id="friends-list"></div>
+        <div id="friends-list">No friends yet (static demo).</div>
       </div>
       <div class="card">
         <h3>All users</h3>
-        <ul id="users-ul"></ul>
+        <ul id="users-list"></ul>
       </div>
     </section>
 
-    <section id="page-messages" class="page hidden left-col">
-      <div class="card messages-panel">
-        <div class="conversations">
-          <h4>Conversations</h4>
-          <ul id="convo-list"></ul>
-        </div>
-        <div class="chat">
-          <div id="chat-window" class="chat-window muted">Select a conversation to view messages</div>
-          <div class="chat-input"><input id="chat-input" placeholder="Type a message"><button id="send-msg" class="btn primary">Send</button></div>
+    <section id="page-messages" class="page hidden">
+      <div class="card">
+        <h3>Messages (static demo)</h3>
+        <p class="muted">Messages are static placeholders in this simplified version.</p>
+        <div class="message-list">
+          <div class="msg">Alice: Hey, how are you?</div>
+          <div class="msg">Bob: Ready for the assignment?</div>
         </div>
       </div>
     </section>
 
-    <section id="page-notifs" class="page hidden left-col">
+    <section id="page-notifs" class="page hidden">
       <div class="card">
         <h3>Notifications</h3>
-        <div id="notifications-list" class="muted"></div>
-      </div>
-    </section>
-
-    <aside class="right-col">
-      <div class="card about">
-        <h3>About this assignment</h3>
-        <p>A simple frontend-only social feed. Data persists in your browser (localStorage). No server required.</p>
-      </div>
-
-      <div class="card trending">
-        <h3>Trending Topics</h3>
-        <ul id="trending-list">
-          <li>#frontend</li>
-          <li>#assignment</li>
-          <li>#miniSNS</li>
+        <ul id="notifs-list">
+          <li>No new notifications (static demo).</li>
         </ul>
       </div>
-
-      <div class="card users" id="user-list">
-        <h3>Users</h3>
-        <ul id="users-mini"></ul>
-      </div>
-
-    </aside>
+    </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <nav class="footer-links" aria-label="Footer">
-        <a href="#" aria-label="About Us">About Us</a>
-        <a href="#" aria-label="Privacy Policy">Privacy Policy</a>
-        <a href="#" aria-label="Terms of Service">Terms of Service</a>
-        <a href="#" aria-label="Contact Us">Contact Us</a>
+    <div class="wrap">
+      <div class="muted">© MiniSNS — Frontend Assignment</div>
+      <nav>
+        <a href="#" aria-label="About">About</a> ·
+        <a href="#" aria-label="Privacy">Privacy</a> ·
+        <a href="#" aria-label="Terms">Terms</a> ·
+        <a href="#" aria-label="Contact">Contact</a>
       </nav>
-
-      <div class="social" aria-label="Social links">
-        <span class="muted">Follow:</span>
-        <a class="social-link" href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 4.01c-.64.29-1.33.48-2.05.57.74-.44 1.31-1.14 1.58-1.98-.69.41-1.45.71-2.26.87C18.6 2.6 17.56 2 16.38 2c-1.93 0-3.5 1.58-3.5 3.53 0 .28.03.55.09.81C9.69 6.17 6.13 4.3 3.64 1.35c-.31.53-.49 1.14-.49 1.8 0 1.24.63 2.33 1.6 2.97-.58-.02-1.12-.18-1.6-.44v.04c0 1.71 1.22 3.14 2.84 3.46-.3.08-.61.12-.93.12-.23 0-.46-.02-.68-.06.46 1.46 1.8 2.53 3.38 2.56-1.24.98-2.8 1.56-4.49 1.56-.29 0-.58-.02-.86-.05 1.61 1.04 3.52 1.65 5.58 1.65 6.69 0 10.35-5.93 10.35-11.07 0-.17 0-.35-.01-.52.71-.52 1.33-1.17 1.82-1.91-.65.29-1.35.49-2.08.58z"/></svg>
-        </a>
-        <a class="social-link" href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12a10 10 0 10-11.5 9.9v-7H8.5v-3h2V9.5c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.3l-.4 3h-1.9v7A10 10 0 0022 12z"/></svg>
-        </a>
-        <a class="social-link" href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M19 3A2 2 0 0121 5v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zm-9.75 7H7V18h2.25V10zm-1.15-3a1.3 1.3 0 110-2.6 1.3 1.3 0 010 2.6zM17 13.5c0-2-1.1-3-2.5-3-1.2 0-1.8.7-2.1 1.2V10H10v8h2.3v-4.2c0-1 .2-2.1 1.6-2.1 1.3 0 1.4 1.1 1.4 2.2V18H17v-4.5z"/></svg>
-        </a>
-      </div>
     </div>
   </footer>
 
   <div id="auth-modal" class="modal hidden">
-    <div class="modal-inner">
-      <button class="modal-close" id="close-auth">✕</button>
-      <h2 id="auth-title">Sign up</h2>
+    <div class="modal-inner card">
+      <button id="close-auth" class="close">✕</button>
+      <h3 id="auth-title">Sign up</h3>
 
-      <form id="auth-forms" class="auth-form" novalidate>
-        <div class="form-row">
-          <label for="auth-name">Name</label>
-          <input id="auth-name" name="name" type="text" autocomplete="name">
-        </div>
+      <div id="auth-msg" class="muted"></div>
 
-        <div class="form-row split">
-          <div class="col">
-            <label for="auth-email">Email</label>
-            <input id="auth-email" name="email" type="email" autocomplete="email">
-          </div>
-          <div class="col">
-            <label for="auth-password">Password</label>
-            <input id="auth-password" name="password" type="password" autocomplete="current-password">
-          </div>
-        </div>
+      <div class="form-row" id="name-row">
+        <label>Name</label>
+        <input id="auth-name" type="text">
+      </div>
 
-        <div class="auth-actions">
-          <button id="auth-submit" class="btn primary">Create account</button>
-          <button id="toggle-auth" type="button" class="btn auth-toggle">Have an account? Log in</button>
-        </div>
+      <div class="form-row">
+        <label>Email</label>
+        <input id="auth-email" type="email">
+      </div>
 
-        <div id="auth-msg" class="muted auth-msg" role="status" aria-live="polite"></div>
-      </form>
+      <div class="form-row">
+        <label>Password</label>
+        <input id="auth-password" type="password">
+      </div>
+
+      <div class="row">
+        <button id="auth-submit" class="btn primary">Create account</button>
+        <button id="toggle-auth" class="btn">Have an account? Log in</button>
+      </div>
     </div>
   </div>
 
